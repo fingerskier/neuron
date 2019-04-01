@@ -17,7 +17,7 @@ function activate() {
 	}
 }
 
-module.exports = class {
+class Neuron {
 	constructor(opts={}) {
 		bias = opts.bias || bias
 		rate = opts.rate || rate
@@ -44,6 +44,16 @@ module.exports = class {
 		let result = []
 
 		for (let Y = 0; Y < size; Y++) result.push(net[I][Y][0])
+
+		return result
+	}
+	
+	get output() {
+		let result = []
+
+		for (let Y = 0; Y < size; Y++) result.push(net[size-1][Y][0])
+
+		return result
 	}
 
 	get print() {
@@ -119,3 +129,5 @@ module.exports = class {
 		if (report) this.print
 	}
 }
+
+// if (module) module.exports = Neuron

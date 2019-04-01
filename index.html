@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>neuron</title>
+
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="./neuron.js"></script>
+        <script>
+            let N = new Neuron({
+                size: 5,
+                threshold: 0.01
+            })
+
+            $(function(){
+                $('form').submit(function(event){
+                    // collect inputs
+                    let inputs = []
+                    let expects = []
+
+                    inputs[0] = $('#In0').val()
+                    inputs[1] = $('#In1').val()
+                    inputs[2] = $('#In2').val()
+
+                    expects[0] = $('#Exp0').val()
+                    expects[1] = $('#Exp1').val()
+                    expects[2] = $('#Exp2').val()
+
+                    N.train(inputs, expects)
+
+                    console.log(N.output)
+
+                    event.preventDefault()
+                    return false
+                })
+            })
+        </script>
+    </head>
+
+    <body>
+        <h1>learning</h1>
+
+        <form action="">
+            <label for="In0">
+                In0
+                <input type="text" name="In0" id="In0">
+            </label>
+            <label for="In1">
+                In1
+                <input type="text" name="In1" id="In1">
+            </label>
+            <label for="In2">
+                In2
+                <input type="text" name="In2" id="In2">
+            </label>
+        </form>
+        <br/>
+        <form action="" name="train" id="train">
+            <label for="Exp0">
+                Exp0
+                <input type="text" name="Exp0" id="Exp0">
+            </label>
+            <label for="Exp1">
+                Exp1
+                <input type="text" name="Exp1" id="Exp1">
+            </label>
+            <label for="Exp2">
+                Exp2
+                <input type="text" name="Exp2" id="Exp2">
+            </label>
+
+            <button>Train</button>
+        </form>
+        <br/>
+        <form action="">
+            <label for="Out0">
+                Out0
+                <input type="text" name="Out0" id="Out0">
+            </label>
+            <label for="Out1">
+                Out1
+                <input type="text" name="Out1" id="Out1">
+            </label>
+            <label for="Out2">
+                Out2
+                <input type="text" name="Out2" id="Out2">
+            </label>
+        </form>
+    </body>
+</html>
