@@ -23,7 +23,7 @@ class Neuron {
 	activate() {
 		for (let X = 1; X < this.size; X++) {	// update signals (top Z-layer)
 			for (let Y = 0; Y < this.size; Y++) {
-				this.net[X][Y][0] = 0
+				this.net[X][Y][0] = 1
 				
 				for (let Z = 1; Z <= this.size; Z++) {
 					this.net[X][Y][0] = this.net[X][Y][Z] * this.net[X-1][Y][0]
