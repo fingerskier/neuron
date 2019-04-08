@@ -1,20 +1,29 @@
+console.clear()
+
 let Neuron = require('./neuron.js')
 
-let ins = [1,1,1,1,1]
-let outs = [0.3, 0.2, 0.4,.5,.6,.7,.8]
+let ins = []
+for (let I = 0; I < 3; I++) ins.push(Math.random())
+
+let outs = ins.slice()
+outs.push(0)
+
+ins.unshift(0)
 
 let N = new Neuron({
     size: ins.length,
-    threshold: 0.01
+    rate: 0.01
 })
 
-console.clear()
 
+console.log(ins, outs)
 
-N.train(ins, ins)
+N.train(ins, outs)
 print_top(N.net)
-for (let I = 0; I < 10; I++) N.train(ins, ins)
+for (let I = 0; I < 10000; I++) N.train(ins, outs)
 print_top(N.net)
+
+console.log(outs, N.get_layer(N.net[0].length-1))
 
 
 function print_top(array3) {

@@ -1,10 +1,9 @@
 class Neuron {
 	constructor(opts={}) {
-		this.bias = 1
 		this.net = []
-		this.rate = 0.1
-		this.threshold = 0.1
-
+		
+		this.bias = opts.bias || 1
+		this.rate = opts.rate || 0.1
 		this.size = opts.size || 3
 
 		for (let X = 0; X < this.size; X++) {
@@ -23,14 +22,29 @@ class Neuron {
 	activate() {
 		for (let X = 1; X < this.size; X++) {	// update signals (top Z-layer)
 			for (let Y = 0; Y < this.size; Y++) {
-				this.net[X][Y][0] = 1
+				this.net[X][Y][0] = this.bias
 				
 				for (let Z = 1; Z <= this.size; Z++) {
-					this.net[X][Y][0] = this.net[X][Y][Z] * this.net[X-1][Y][0]
+					this.net[X][Y][0] += this.net[X][Y][Z] * this.net[X-1][Y][0]
 				}
 				
 				this.net[X][Y][0] = Math.max(this.net[X][Y][0], 0)	// RELU activation
 			}
+		}
+	}
+
+	get_layer(X) {
+		let result = []
+
+		for (let Y = 0; Y < this.size; Y++)
+			result.push(this.net[X][Y][0])
+
+		return result
+	}
+
+	set_layer(X, inputs) {
+		for (let Y in inputs) {
+			this.net[X][Y][0] = inputs[Y]
 		}
 	}
 
@@ -39,9 +53,7 @@ class Neuron {
 
 		this.inputs = inputter.slice
 
-		for (let Y = 0; Y < this.size; Y++) {	// glean inputs
-			this.net[0][Y][0] = +inputter[Y]
-		}
+		this.set_layer(0, inputter)
 
 		this.activate()
 
@@ -49,7 +61,7 @@ class Neuron {
 			for (let Y = 0; Y < this.size; Y++) {	// count the costs
 				let error = expected[Y] - this.net[X][Y][0]
 
-				let diff = error * this.net[X][Y][0] * this.rate
+				let diff = error * this.rate
 
 				for (let Z = 1; Z <= this.size; Z++) {
 					this.net[X][Y][Z] += diff
@@ -58,8 +70,7 @@ class Neuron {
 
 			this.activate()
 
-			for (let Y = 0; Y < this.size; Y++)	// glean the expected values for nexties
-				expected[Y] = this.net[X][Y][0]
+			expected = this.get_layer(X)
 		}
 	}
 }
