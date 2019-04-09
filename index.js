@@ -1,36 +1,8 @@
 console.clear()
 
 let fs = require('fs')
+let Neuron = require('./neuron.js')
 let Encoder = require('./encoder.js')
-
-let ins = []
-for (let I = 0; I < 4; I++) ins.push(Math.random())
-ins.push(0)
-
-let outs = ins.slice()
-outs.reverse()
-
-let E = new Encoder({
-    height: ins.length,
-    rate: 0.01
-})
-
-
-console.log(ins)
-console.log(outs)
-
-
-E.train(ins, outs)
-for (let I = 0; I < 10000000; I++) E.train(ins, outs)
-
-for (let I = 0; I < E.size; I++) print_layer(E.net, I)
-
-print_layer(E.net, 0)
-print_layer(E.net, 1)
-print_layer(E.net, 2)
-
-save_model('model.json', N.net)
-
 
 function load_model(filepath, thisn) {
     fs.readFileSync(filepath, function(stuff){
@@ -40,6 +12,16 @@ function load_model(filepath, thisn) {
 
 function save_model(filepath, thisn) {
     fs.writeFileSync(filepath, JSON.stringify(thisn.net))
+}
+
+function print_code(array2, X) {
+    let line = ""
+
+    for (let Y = 0; Y < array2[X].length; Y += 2) {
+        line += array2[X][Y][0].toFixed(2) + ','
+    }
+
+    console.log(line)
 }
 
 function print_layer(array2, X) {
@@ -56,7 +38,6 @@ function print_layer(array2, X) {
     console.log("***")
 }
 
-
 function print_top(array3) {
     console.log("===")
 
@@ -72,4 +53,15 @@ function print_top(array3) {
     }
     
     console.log("===")
+}
+
+
+if (module) module.exports = {
+    Neuron: Neuron,
+    Encoder: Encoder,
+    load_model: load_model,
+    save_model: save_model,
+    print_code: print_code,
+    print_layer: print_layer,
+    print_top: print_top
 }

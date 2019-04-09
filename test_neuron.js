@@ -4,13 +4,13 @@ let fs = require('fs')
 let Neuron = require('./neuron.js')
 
 let ins = []
-for (let I = 0; I < 4; I++) ins.push(Math.random())
-ins.push(0)
+for (let I = 0; I < 8; I++) ins.push(Math.random())
 
 let outs = ins.slice()
 outs.reverse()
 
 let N = new Neuron({
+    activation: 'trunc',
     height: ins.length,
     rate: 0.01
 })
@@ -21,7 +21,7 @@ console.log(outs)
 
 
 N.train(ins, outs)
-for (let I = 0; I < 10000000; I++) N.train(ins, outs)
+for (let I = 0; I < 100000; I++) N.train(ins, outs)
 
 for (let I = 0; I < N.size; I++) print_layer(N.net, I)
 

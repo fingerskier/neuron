@@ -2,6 +2,7 @@ class Neuron {
 	constructor(opts={}) {
 		this.net = []
 		
+		this.activation = opts.activation || "RELU"	// options are RELU, round, or trunc
 		this.bias = opts.bias || 1
 		this.height = opts.height || 4
 		this.rate = opts.rate || 0.1
@@ -24,12 +25,21 @@ class Neuron {
 		for (let X = 1; X < this.width; X++) {	// update signals (top Z-layer)
 			for (let Y = 0; Y < this.height; Y++) {
 				this.net[X][Y][0] = this.bias
-				
+
 				for (let Z = 1; Z <= this.height; Z++) {
 					this.net[X][Y][0] += this.net[X][Y][Z] * this.net[X-1][Y][0]
 				}
-				
-				this.net[X][Y][0] = Math.max(this.net[X][Y][0], 0)	// RELU activation
+
+				if (this.activation == 'trunc') {
+					// trunc activation
+					this.net[X][Y][0] = +this.net[X][Y][0].toFixed(1)
+				} else if (this.activation == 'round') {
+					// round activation
+					this.net[X][Y][0] = Math.round(this.net[X][Y][0])
+				} else {
+					// RELU activation as the default
+					this.net[X][Y][0] = Math.max(this.net[X][Y][0], 0)
+				}
 			}
 		}
 	}

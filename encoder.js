@@ -90,6 +90,7 @@ class Neuron {
 	}
 
 	train(inputter, expectation) {
+		let error = 0
 		let expected = expectation.slice()
 
 		this.inputs = inputter.slice
@@ -103,7 +104,7 @@ class Neuron {
             // for (let Y = 0; Y < this.height; Y++) {
 			// for (let Y = this.layer_offset(X); Y < this.height-this.layer_offset(X); Y++) {
                 // count the costs
-				let error = expected[Y] - this.net[X][Y][0]
+				error = expected[Y] - this.net[X][Y][0]
 
 				let diff = error * this.rate
 
@@ -117,6 +118,8 @@ class Neuron {
 
 			expected = this.get_layer(X)
 		}
+
+		return error
 	}
 }
 
