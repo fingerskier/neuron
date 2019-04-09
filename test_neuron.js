@@ -1,7 +1,7 @@
 console.clear()
 
 let fs = require('fs')
-let Encoder = require('./encoder.js')
+let Neuron = require('./neuron.js')
 
 let ins = []
 for (let I = 0; I < 4; I++) ins.push(Math.random())
@@ -10,7 +10,7 @@ ins.push(0)
 let outs = ins.slice()
 outs.reverse()
 
-let E = new Encoder({
+let N = new Neuron({
     height: ins.length,
     rate: 0.01
 })
@@ -20,14 +20,14 @@ console.log(ins)
 console.log(outs)
 
 
-E.train(ins, outs)
-for (let I = 0; I < 10000000; I++) E.train(ins, outs)
+N.train(ins, outs)
+for (let I = 0; I < 10000000; I++) N.train(ins, outs)
 
-for (let I = 0; I < E.size; I++) print_layer(E.net, I)
+for (let I = 0; I < N.size; I++) print_layer(N.net, I)
 
-print_layer(E.net, 0)
-print_layer(E.net, 1)
-print_layer(E.net, 2)
+print_layer(N.net, 0)
+print_layer(N.net, 1)
+print_layer(N.net, 2)
 
 save_model('model.json', N.net)
 

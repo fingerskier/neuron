@@ -4,42 +4,41 @@ let fs = require('fs')
 let Encoder = require('./encoder.js')
 
 let ins = []
-for (let I = 0; I < 4; I++) ins.push(Math.random())
-ins.push(0)
+for (let I = 0; I < 5; I++) ins.push(Math.random())
 
-let outs = ins.slice()
-outs.reverse()
 
 let E = new Encoder({
     height: ins.length,
-    rate: 0.01
+    rate: 0.1
 })
 
 
 console.log(ins)
-console.log(outs)
 
 
-E.train(ins, outs)
-for (let I = 0; I < 10000000; I++) E.train(ins, outs)
+E.train(ins, ins)
+for (let I = 0; I < 1000000; I++) E.train(ins, ins)
 
 for (let I = 0; I < E.size; I++) print_layer(E.net, I)
 
 print_layer(E.net, 0)
 print_layer(E.net, 1)
 print_layer(E.net, 2)
+print_layer(E.net, 3)
+print_layer(E.net, 4)
 
-save_model('model.json', N.net)
+
+save_model('model.json', E.net)
 
 
 function load_model(filepath, thisn) {
     fs.readFileSync(filepath, function(stuff){
-        thisn.net = JSON.parse(stuff)
+        thisn = JSON.parse(stuff)
     })
 }
 
 function save_model(filepath, thisn) {
-    fs.writeFileSync(filepath, JSON.stringify(thisn.net))
+    fs.writeFileSync(filepath, JSON.stringify(thisn))
 }
 
 function print_layer(array2, X) {
