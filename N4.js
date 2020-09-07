@@ -1,6 +1,11 @@
 const {random, multiply, dotMultiply, mean, abs, subtract, transpose, add} = require('mathjs')
 
 class Neuron {
+	static RELU(x, derivative) {
+		if (derivative) return (x>0) ? 1 :0
+		else result = Math.max(0,x)		
+	}
+
 	static sigmoid(x, derivative) {     
 		let fx = 1 / (1 + Math.exp(-x));     
 		if (derivative)         

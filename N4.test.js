@@ -5,6 +5,7 @@ NN = new Neuron({
 	num_inputs: 2,
 	num_hiddens: 4,
 	num_outputs: 1,
+	activation: Neuron.RELU,
 })
 
 const input = matrix([[0,0], [0,1], [1,0], [1,1]]);

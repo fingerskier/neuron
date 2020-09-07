@@ -1,121 +1,65 @@
+const {random, multiply, dotMultiply, mean, abs, subtract, transpose, add} = require('mathjs')
+
 class Neuron {
-	static sigmoid(X) {
-		return 1 / (1 + Math.exp(X))
-	}
-	
-	static RELU(X) {
-		return Math.max(0, X)
-	}
-	
 	constructor(opts={}) {
-		this.net = []
+		this.input_nodes = opts.num_inputs
+		this.hidden_nodes = opts.num_hiddens
+		this.output_nodes = opts.num_outputs
+
+		this.epochs = opts.epochs || 50000
+		this.activation = opts.epochs || Neuron.sigmoid
+		this.lr = opts.learning_rate || 0.5
+
+		this.output = 0;
+
+		this.synapse0 = random([this.input_nodes, this.hidden_nodes], -1.0, 1.0); //connections from input layer to hiden
+		this.synapse1 = random([this.hidden_nodes, this.output_nodes], -1.0, 1.0); //connections from hidden layer to output
+	}
+
+	static RELU(x, derivative) {
+		if (derivative) return (x>0) ? 1 :0
+		else result = Math.max(0,x)		
+	}	
+
+	static sigmoid(x, derivative) {     
+		let fx = 1 / (1 + Math.exp(-x));     
+		if (derivative)         
+			 return fx * (1 - fx);     
+		return fx; 	 
+	}	
+
+	train(input, target) {
+		for (let i = 0; i < this.epochs; i++) {
+			//forward
+			let input_layer = input; //input data
+			let hidden_layer = multiply(input_layer, this.synapse0).map(v => this.activation(v, false)); //output of hidden layer neurons (matrix!)
+			let output_layer = multiply(hidden_layer, this.synapse1).map(v => this.activation(v, false)); // output of last layer neurons (matrix!)
+
+			//backward
+			let output_error = subtract(target, output_layer); //calculating error (matrix!)       
+			let output_delta = dotMultiply(output_error, output_layer.map(v => this.activation(v, true))); //calculating delta (vector!)
+			let hidden_error = multiply(output_delta, transpose(this.synapse1)); //calculating of error of hidden layer neurons (matrix!)
+			let hidden_delta = dotMultiply(hidden_error, hidden_layer.map(v => this.activation(v, true))); //calculating delta (vector!)
+
+			//gradient descent
+			this.synapse1 = add(this.synapse1, multiply(transpose(hidden_layer), multiply(output_delta, this.lr)));
+			this.synapse0 = add(this.synapse0, multiply(transpose(input_layer), multiply(hidden_delta, this.lr)));
+			this.output = output_layer;
+
+			if (i % 10000 == 0)
+					console.log(`Error: ${mean(abs(output_error))}`);
+		}
+	}
+
+	predict(input) {
+    let input_layer = input;
+    let hidden_layer = multiply(input_layer, this.synapse0).map(v => this.activation(v, false));
+		let output_layer = multiply(hidden_layer, this.synapse1).map(v => this.activation(v, false));
 		
-		this.activation = opts.activation
-		this.bias = opts.bias || 1
-		this.height = opts.height || 4
-		this.rate = opts.rate || 0.1
-		this.width = opts.size || 3
+		console.log('Neuron innards', this)
 
-
-		for (let X = 0; X < this.width; X++) {
-			this.net[X] = new Array(this.width)
-			
-			for (let Y = 0; Y < this.height; Y++){
-				this.net[X][Y] = new Array(this.height)
-				
-				for (let Z = 0; Z <= this.height; Z++){
-					this.net[X][Y][Z] = 0.5
-				}
-			}
-		}
-	}
-
-	activate() {
-		for (let X = 1; X < this.width; X++) {	// update signals (top Z-layer)
-			for (let Y = 0; Y < this.height; Y++) {
-				this.net[X][Y][0] = this.bias
-
-				for (let Z = 1; Z <= this.height; Z++) {
-					this.net[X][Y][0] += this.net[X][Y][Z] * this.net[X-1][Y][0]
-				}
-
-				this.net[X][Y][0] = this.activation(this.net[X][Y][0])
-			}
-		}
-	}
-
-	get_layer(X) {
-		let result = []
-
-		for (let Y = 0; Y < this.height; Y++)
-			result.push(this.net[X][Y][0])
-
-		return result
-	}
-
-	point(X,Y,Z,val) {
-		if (val || val===0) this.net[X][Y][Z] = val
-		return this.net[X][Y][Z]
-	}
-
-	prettyPrint(msg="") {
-		let line = ""
-	
-		console.log()
-		console.log(msg)
-		console.log(`===`)
-		for (let Z = 0; Z <= size; Z++) {
-			for (let Y = 0; Y < size; Y++) {
-				line = ""
-				
-				for (let X = 0; X < size; X++) {
-					line += (Math.round(net[X][Y][Z] * 100) / 100) + "\t"
-				}   
-				console.log(`${line}`)
-			}
-			console.log(`---`)
-		}
-		console.log(`=====`)
-	}
-
-	set_layer(X, inputs) {
-		for (let Y in inputs) {
-			this.net[X][Y][0] = inputs[Y]
-		}
-	}
-
-	train(inputter, expectation) {
-		let expected = expectation.slice()
-
-		this.inputs = inputter.slice
-
-		this.set_layer(0, inputter)
-
-		this.activate()
-
-		for (let X = this.width-1; X > 0; X--) {
-			for (let Y = 0; Y < this.height; Y++) {	// count the costs
-				let error = expected[Y] - this.net[X][Y][0]
-
-				let diff = error * this.rate
-
-// console.log(`X:${X}, Y:${Y}, expected:${expected[Y]} error:${error}`)
-				for (let Z = 1; Z <= this.height; Z++) {
-					this.net[X][Y][Z] += diff
-				}
-			}
-
-			this.activate()
-
-			expected = this.get_layer(X)
-		}
+    return output_layer;
 	}
 }
 
-try {
-	module.exports = Neuron
-} catch (error) {
-	;
-}
-
-export default Neuron
+module.exports = Neuron
