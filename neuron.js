@@ -1,12 +1,21 @@
 class Neuron {
+	static sigmoid(X) {
+		return 1 / (1 + Math.exp(X))
+	}
+	
+	static RELU(X) {
+		return Math.max(0, X)
+	}
+	
 	constructor(opts={}) {
 		this.net = []
 		
-		this.activation = opts.activation || "RELU"	// options are RELU, round, or trunc
+		this.activation = opts.activation
 		this.bias = opts.bias || 1
 		this.height = opts.height || 4
 		this.rate = opts.rate || 0.1
 		this.width = opts.size || 3
+
 
 		for (let X = 0; X < this.width; X++) {
 			this.net[X] = new Array(this.width)
@@ -30,16 +39,7 @@ class Neuron {
 					this.net[X][Y][0] += this.net[X][Y][Z] * this.net[X-1][Y][0]
 				}
 
-				if (this.activation == 'trunc') {
-					// trunc activation
-					this.net[X][Y][0] = +this.net[X][Y][0].toFixed(1)
-				} else if (this.activation == 'round') {
-					// round activation
-					this.net[X][Y][0] = Math.round(this.net[X][Y][0])
-				} else {
-					// RELU activation as the default
-					this.net[X][Y][0] = Math.max(this.net[X][Y][0], 0)
-				}
+				this.net[X][Y][0] = this.activation(this.net[X][Y][0])
 			}
 		}
 	}
@@ -51,6 +51,31 @@ class Neuron {
 			result.push(this.net[X][Y][0])
 
 		return result
+	}
+
+	point(X,Y,Z,val) {
+		if (val || val===0) this.net[X][Y][Z] = val
+		return this.net[X][Y][Z]
+	}
+
+	prettyPrint(msg="") {
+		let line = ""
+	
+		console.log()
+		console.log(msg)
+		console.log(`===`)
+		for (let Z = 0; Z <= size; Z++) {
+			for (let Y = 0; Y < size; Y++) {
+				line = ""
+				
+				for (let X = 0; X < size; X++) {
+					line += (Math.round(net[X][Y][Z] * 100) / 100) + "\t"
+				}   
+				console.log(`${line}`)
+			}
+			console.log(`---`)
+		}
+		console.log(`=====`)
 	}
 
 	set_layer(X, inputs) {
@@ -87,4 +112,10 @@ class Neuron {
 	}
 }
 
-if (module) module.exports = Neuron
+try {
+	module.exports = Neuron
+} catch (error) {
+	;
+}
+
+export default Neuron

@@ -6,7 +6,7 @@ let outputs = []
 let rate = 1
 let size = 3
 let stability = 1
-let threshold = 0.1
+let threshold = 0.01
 
 
 function initalize() {
@@ -29,7 +29,8 @@ function prettyPrint(msg="") {
 	console.log()
 	console.log(msg)
 	console.log(`===`)
-	for (let Z = 0; Z <= size; Z++) {
+	// for (let Z = 0; Z <= size; Z++) {
+		let Z = 0
 		for (let Y = 0; Y < size; Y++) {
 			line = ""
 			
@@ -39,7 +40,7 @@ function prettyPrint(msg="") {
 			console.log(`${line}`)
 		}
 		console.log(`---`)
-	}
+	// }
 	console.log(`=====`)
 }
 
